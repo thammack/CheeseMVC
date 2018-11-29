@@ -1,0 +1,19 @@
+﻿
+@{
+}
+
+<h1>Remove Cheese</h1>
+
+
+<form method="post">
+
+    @if (ViewBag.cheeses != null)
+    {
+     @foreach (KeyValuePair<string, string> cheese in ViewBag.cheeses)
+     {
+         <input type="checkbox" name="yourDeleteList" value='@cheese.Key' />@cheese.Key<br />
+     }
+    }
+
+    <input type="submit" value="Remove Cheese" />
+</form>

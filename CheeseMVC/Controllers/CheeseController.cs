@@ -10,7 +10,16 @@ namespace CheeseMVC.Controllers
 {
     public class CheeseController : Controller
     {
-        static private Dictionary<string, string> Cheeses = new Dictionary<string, string>();
+        static private Dictionary<string, string> Cheeses = new Dictionary<string, string>()
+        {
+            { "cheddar", "cheese 01" },
+            { "muenster", "cheese 02" },
+            { "blue", "cheese 03" },
+            { "limburger", "cheese 04" },
+            { "swiss", "cheese 05" },
+            { "American", "cheese 06" },
+            { "goat milk", "cheese 07" }
+        };
 
         // GET: /<controller>/
         public IActionResult Index()
@@ -35,6 +44,25 @@ namespace CheeseMVC.Controllers
 
             return Redirect("/Cheese");
         }
-        
+
+        public IActionResult Remove()
+        {
+            ViewBag.cheeses = Cheeses;
+            return View();
+        }
+
+        [HttpPost]
+        [Route("/Cheese/Remove")]
+        public IActionResult RemoveCheese(string[] yourDeleteList)
+        {
+            foreach(var name in yourDeleteList)
+            if (Cheeses.ContainsKey(name))
+            {
+                Cheeses.Remove(name);
+            }
+
+            return Redirect("/Cheese");
+        }
+
     }
 }
