@@ -1,8 +1,11 @@
 ﻿@{
-    
+
 }
 <h1>Add Cheese</h1>
-
+@if (ViewData.ContainsKey("AddError") && ViewData["AddError"] != null)
+{
+    <h1><font color="Red">Error: @ViewData["AddError"]</font></h1>
+}
 <form method="post">
    <input name="name" type="text"/>
    <input name="description" type="text"/>

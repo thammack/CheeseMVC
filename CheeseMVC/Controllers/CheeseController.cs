@@ -21,6 +21,12 @@ namespace CheeseMVC.Controllers
             { "goat milk", "cheese 07" }
         };
 
+        static public readonly string AddErrorString = "AddError";
+        static public readonly KeyValuePair<string, object> AddErrorDuplicate = new KeyValuePair<string, object>(AddErrorString, "Duplicate name");
+        static public readonly KeyValuePair<string, object> AddErrorInvalid = new KeyValuePair<string, object>(AddErrorString, "Invalid Name");
+        static public readonly KeyValuePair<string, object> AddErrorNone = new KeyValuePair<string, object>(AddErrorString, null);
+        static private KeyValuePair<string, object> AddErrorState = AddErrorNone;
+
         // GET: /<controller>/
         public IActionResult Index()
         {
@@ -32,6 +38,7 @@ namespace CheeseMVC.Controllers
 
         public IActionResult Add()
         {
+            ViewData.Add(AddErrorState);
             return View();
         }
 
@@ -39,10 +46,29 @@ namespace CheeseMVC.Controllers
         [Route("/Cheese/Add")]
         public IActionResult NewCheese(string name, string description)
         {
-            // Add the new cheese to the cheese list.
-            Cheeses.Add(name, description);
+            if (IsAlpha(name))
+            {
+                if (Cheeses.ContainsKey(name))
+                {
+                    SetAddErrorFlag(AddErrorDuplicate);
+                    return Redirect("/Cheese/Add");
+                }
+                else
+                {
+                    SetAddErrorFlag(AddErrorNone);
 
-            return Redirect("/Cheese");
+                    // Add the new cheese to the cheese list.
+                    Cheeses.Add(name, description);
+                    return Redirect("/Cheese");
+                }
+            }
+            else
+            {
+                SetAddErrorFlag(AddErrorInvalid);
+                return Redirect("/Cheese/Add");
+            }
+
+            
         }
 
         public IActionResult Remove()
@@ -64,5 +90,23 @@ namespace CheeseMVC.Controllers
             return Redirect("/Cheese");
         }
 
+        public static bool IsAlpha(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return false;
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (!char.IsLetter(str[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private void SetAddErrorFlag(KeyValuePair<string, object> value)
+        {
+            AddErrorState = value;
+        }
     }
 }
